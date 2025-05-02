@@ -104,6 +104,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->btnCLA1->setEnabled(false);
     ui->btnCAL2->setEnabled(false);
 
+    ui->actionSAVE_LOOP_1->setEnabled(false);
+    ui->actionSAVE_LOOP_2->setEnabled(false);
+
+    ui->actionEEPROM->setEnabled(false);
+    ui->actionOPEN_PARAMETERS->setEnabled(false);
+
     resetLoop1();
     resetLoop2();
 
@@ -166,6 +172,9 @@ void MainWindow::on_actionCONNECT_triggered()
 
         ui->btnCLA1->setEnabled(true);
         ui->btnCAL2->setEnabled(true);
+
+        ui->actionEEPROM->setEnabled(true);
+        ui->actionOPEN_PARAMETERS->setEnabled(true);
     }
     else {
         // Restore portName if we overwrote it above:
@@ -198,6 +207,9 @@ void MainWindow::on_actionDISCONNECT_triggered()
     ui->actionRESET_MCU->setEnabled(false);
     ui->actionLED_TEST->setEnabled(false);
     ui->actionFORMAT_EEPROM->setEnabled(false);
+
+    ui->actionEEPROM->setEnabled(false);
+    ui->actionOPEN_PARAMETERS->setEnabled(false);
 
     ui->btnCLA1->setEnabled(false);
     ui->btnCAL2->setEnabled(false);

@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file>loop_detector_favicon.ico</file>
+  </qresource>
+</RCC>
