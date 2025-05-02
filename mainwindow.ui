@@ -6,26 +6,282 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Magnetic Loop Detector Debug</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayoutCharts">
+    <item>
+     <layout class="QHBoxLayout" name="loop1Layout">
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="loop1Buttons_layout">
+        <item>
+         <widget class="QPushButton" name="btnRESET1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>RESET LOOP 1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCLA1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>CAL LOOP 1</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QChartView" name="chartViewLoop1" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="loop2Layout">
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="loop2Buttons_layout">
+        <item>
+         <widget class="QPushButton" name="btnRESET2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>RESET LOOP 2</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCAL2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>CAL LOOP 2</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QChartView" name="chartViewLoop2" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1280</width>
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuCONNECTION">
+    <property name="title">
+     <string>CONNECTION</string>
+    </property>
+    <addaction name="actionSERIAL_PORT"/>
+    <addaction name="actionCONNECT"/>
+    <addaction name="actionDISCONNECT"/>
+    <addaction name="actionREFRESH"/>
+   </widget>
+   <widget class="QMenu" name="menuSAVE">
+    <property name="title">
+     <string>SAVE</string>
+    </property>
+    <addaction name="actionSAVE_LOOP_1"/>
+    <addaction name="actionSAVE_LOOP_2"/>
+   </widget>
+   <widget class="QMenu" name="menuPARAMETERS">
+    <property name="title">
+     <string>PARAMETERS</string>
+    </property>
+    <addaction name="actionOPEN_PARAMETERS"/>
+    <addaction name="actionEEPROM"/>
+   </widget>
+   <widget class="QMenu" name="menuSPECIAL_COMMANDS">
+    <property name="title">
+     <string>SPECIAL COMMANDS</string>
+    </property>
+    <addaction name="actionRESET_MCU"/>
+    <addaction name="actionLED_TEST"/>
+    <addaction name="actionFORMAT_EEPROM"/>
+   </widget>
+   <widget class="QMenu" name="menuLOAD">
+    <property name="title">
+     <string>LOAD</string>
+    </property>
+    <addaction name="actionLOAD_LOOP1"/>
+    <addaction name="actionLOAD_LOOP2"/>
+   </widget>
+   <widget class="QMenu" name="menuLIVE">
+    <property name="title">
+     <string>LIVE</string>
+    </property>
+    <addaction name="actionLIVE_ON"/>
+    <addaction name="actionLIVE_OFF"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuCONNECTION"/>
+   <addaction name="menuSAVE"/>
+   <addaction name="menuLOAD"/>
+   <addaction name="menuPARAMETERS"/>
+   <addaction name="menuSPECIAL_COMMANDS"/>
+   <addaction name="menuLIVE"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionSERIAL_PORT">
+   <property name="text">
+    <string>SERIAL PORT</string>
+   </property>
+  </action>
+  <action name="actionCONNECT">
+   <property name="text">
+    <string>CONNECT</string>
+   </property>
+  </action>
+  <action name="actionDISCONNECT">
+   <property name="text">
+    <string>DISCONNECT</string>
+   </property>
+  </action>
+  <action name="actionREFRESH">
+   <property name="text">
+    <string>REFRESH</string>
+   </property>
+  </action>
+  <action name="actionSAVE_LOOP_1">
+   <property name="text">
+    <string>SAVE LOOP 1</string>
+   </property>
+  </action>
+  <action name="actionSAVE_LOOP_2">
+   <property name="text">
+    <string>SAVE LOOP 2</string>
+   </property>
+  </action>
+  <action name="actionOPEN_PARAMETERS">
+   <property name="text">
+    <string>OPEN PARAMETERS</string>
+   </property>
+  </action>
+  <action name="actionEEPROM">
+   <property name="text">
+    <string>EEPROM</string>
+   </property>
+  </action>
+  <action name="actionRESET_MCU">
+   <property name="text">
+    <string>RESET MCU</string>
+   </property>
+  </action>
+  <action name="actionLED_TEST">
+   <property name="text">
+    <string>LED TEST</string>
+   </property>
+  </action>
+  <action name="actionFORMAT_EEPROM">
+   <property name="text">
+    <string>FORMAT EEPROM</string>
+   </property>
+  </action>
+  <action name="actionLOAD_LOOP1">
+   <property name="text">
+    <string>LOAD LOOP1</string>
+   </property>
+  </action>
+  <action name="actionLOAD_LOOP2">
+   <property name="text">
+    <string>LOAD LOOP2</string>
+   </property>
+  </action>
+  <action name="actionLIVE_ON">
+   <property name="text">
+    <string>LIVE ON</string>
+   </property>
+  </action>
+  <action name="actionLIVE_OFF">
+   <property name="text">
+    <string>LIVE OFF</string>
+   </property>
+  </action>
+  <action name="actionSHOW_DELTA">
+   <property name="text">
+    <string>SHOW DELTA</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QWidget</extends>
+   <header>qchartview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

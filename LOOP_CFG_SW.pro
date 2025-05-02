@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets charts serialport
 
 CONFIG += c++17
 
@@ -9,14 +9,20 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    eepromdialog.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    parametersdialog.cpp
 
 HEADERS += \
-    mainwindow.h
+    eepromdialog.h \
+    mainwindow.h \
+    parametersdialog.h
 
 FORMS += \
-    mainwindow.ui
+    eepromdialog.ui \
+    mainwindow.ui \
+    parametersdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
