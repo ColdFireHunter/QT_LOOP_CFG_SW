@@ -1,0 +1,1 @@
+# QT_LOOP_CFG_SW
