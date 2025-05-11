@@ -92,9 +92,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->verticalLayoutCharts->insertWidget(3, scrollBar2);
     connect(scrollBar1, &QScrollBar::valueChanged, this, [this](int v){
         axisX1->setRange(v, v + windowSize);
+        autoscaleYVisible(series1, axisX1, axisY1);
     });
     connect(scrollBar2, &QScrollBar::valueChanged, this, [this](int v){
         axisX2->setRange(v, v + windowSize);
+        autoscaleYVisible(series2, axisX2, axisY2);
     });
 
     ui->actionRESET_MCU->setEnabled(false);
@@ -233,16 +235,8 @@ void MainWindow::addLoop1Data(double frequency)
         scrollBar1->setValue(maxScroll);
     }
 
-    // 5) Autoscale Y‐axis
-    auto pts = series1->pointsVector();
-    if (!pts.isEmpty()) {
-        double minY = pts.first().y(), maxY = minY;
-        for (auto &p : pts) {
-            minY = qMin(minY, p.y());
-            maxY = qMax(maxY, p.y());
-        }
-        axisY1->setRange(minY, maxY);
-    }
+    autoscaleYVisible(series1, axisX1, axisY1);
+
 }
 void MainWindow::addLoop2Data(double frequency)
 {
@@ -262,16 +256,7 @@ void MainWindow::addLoop2Data(double frequency)
         scrollBar2->setValue(maxScroll);
     }
 
-    // 5) Finally, still autoscale Y here if you like:
-    auto pts = series2->pointsVector();
-    if (!pts.isEmpty()) {
-        double minY = pts.first().y(), maxY = minY;
-        for (auto &p : pts) {
-            minY = qMin(minY, p.y());
-            maxY = qMax(maxY, p.y());
-        }
-        axisY2->setRange(minY, maxY);
-    }
+    autoscaleYVisible(series2, axisX2, axisY2);
 }
 void MainWindow::resetLoop1()
 {
@@ -332,24 +317,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             }
             axisX->setRange(minX, maxX);
 
-            // Y-axis clamp
-            // Compute data‐max from the series
-            double dataMaxY = 0;
-            for (auto &pt : series->pointsVector())
-                dataMaxY = qMax(dataMaxY, pt.y());
-
-            double minY = axisY->min();
-            double maxY = axisY->max();
-            if (minY < 0) {
-                double spanY = maxY - minY;
-                minY = 0;
-                maxY = spanY;
-            }
-            if (maxY > dataMaxY) {
-                maxY = dataMaxY;
-                minY = qMax(0.0, maxY / 2.0); // or keep previous minY
-            }
-            axisY->setRange(minY, maxY);
+            autoscaleYVisible(series, axisX, axisY);
         };
 
         // Mouse wheel: zoom
@@ -571,7 +539,7 @@ void MainWindow::onSerialReadyRead()
         if (line.startsWith("LIVE:")) {
             QString data = line.mid(QString("LIVE:").length());
             QStringList parts = data.split(',', Qt::KeepEmptyParts);
-            if (parts.size() == 20) {
+            if (parts.size() == 22) {
                 bool ok;
                 double freq0 = parts[0].toDouble(&ok);
                 if (ok)
@@ -585,25 +553,28 @@ void MainWindow::onSerialReadyRead()
                 int state1 = parts[3].toInt(&ok);
                 double base0 = parts[4].toDouble(&ok);
                 double base1 = parts[5].toDouble(&ok);
-                double jump0 = parts[6].toDouble(&ok);
-                double jump1 = parts[7].toDouble(&ok);
-                double open0 = parts[8].toDouble(&ok);
-                double open1 = parts[9].toDouble(&ok);
-                double short0 = parts[10].toDouble(&ok);
-                double short1 = parts[11].toDouble(&ok);
-                int cal0 = parts[12].toInt(&ok);
-                int cal1 = parts[13].toInt(&ok);
-                int sens1 = parts[14].toInt(&ok);
-                int sens2 = parts[15].toInt(&ok);
-                int boost = parts[16].toInt(&ok);
-                int freqChange = parts[17].toInt(&ok);
-                int loop2Event = parts[18].toInt(&ok);
-                int detectMode = parts[19].toInt(&ok);
+                double std0 = parts[6].toDouble(&ok);
+                double std1 = parts[7].toDouble(&ok);
+                double jump0 = parts[8].toDouble(&ok);
+                double jump1 = parts[9].toDouble(&ok);
+                double open0 = parts[10].toDouble(&ok);
+                double open1 = parts[11].toDouble(&ok);
+                double short0 = parts[12].toDouble(&ok);
+                double short1 = parts[13].toDouble(&ok);
+                int cal0 = parts[14].toInt(&ok);
+                int cal1 = parts[15].toInt(&ok);
+                int sens1 = parts[16].toInt(&ok);
+                int sens2 = parts[17].toInt(&ok);
+                int boost = parts[18].toInt(&ok);
+                int freqChange = parts[19].toInt(&ok);
+                int loop2Event = parts[20].toInt(&ok);
+                int detectMode = parts[21].toInt(&ok);
                 // Display on status bar
                 // Build first half (up through calibration flags):
-                QString line1 = tr("S0:%1  S1:%2  B0:%3  B1:%4  J0:%5  J1:%6  O0:%7  O1:%8  SH0:%9  SH1:%10  C0:%11  C1:%12")
+                QString line1 = tr("S0:%1  S1:%2  B0:%3  B1:%4 STD0:%5 STD1:%6 J0:%7  J1:%8  O0:%9  O1:%10  SH0:%11  SH1:%12  C0:%13  C1:%14")
                                     .arg(state0).arg(state1)
                                     .arg(base0,0,'f',1).arg(base1,0,'f',1)
+                                    .arg(std0,0,'f',1).arg(std1,0,'f',1)
                                     .arg(jump0,0,'f',1).arg(jump1,0,'f',1)
                                     .arg(open0,0,'f',1).arg(open1,0,'f',1)
                                     .arg(short0,0,'f',1).arg(short1,0,'f',1)
@@ -742,4 +713,33 @@ void MainWindow::on_actionOPEN_PARAMETERS_triggered()
     parametersDialog->show();
     parametersDialog->raise();
     parametersDialog->onRefreshClicked();  // fetch current params
+}
+void MainWindow::autoscaleYVisible(QLineSeries* series, QValueAxis* axisX, QValueAxis* axisY) {
+    // 1) alle Punkte im sichtbaren X-Bereich sammeln
+    const auto minX = axisX->min();
+    const auto maxX = axisX->max();
+    QVector<double> yVals;
+    for (const auto &pt : series->pointsVector()) {
+        if (pt.x() >= minX && pt.x() <= maxX)
+            yVals.append(pt.y());
+    }
+    if (yVals.empty()) return;
+
+    // 2) sortieren
+    std::sort(yVals.begin(), yVals.end());
+
+    // 3) Einmal-Spikes herausschneiden:
+    //    Wenn das kleinste bzw. größte Element nur einmal vorkommt,
+    //    überspringe es bei der Min/Max-Berechnung.
+    int start = 0;
+    int end   = int(yVals.size()) - 1;
+    if (end > start) {
+        // kleiner Spike?
+        if (yVals[0] != yVals[1]) start++;
+        // großer Spike?
+        if (yVals[end] != yVals[end-1]) end--;
+    }
+
+    // 4) Range neu setzen
+    axisY->setRange(yVals[start], yVals[end]);
 }

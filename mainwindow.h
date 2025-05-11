@@ -107,6 +107,8 @@ private:
 
     EEPROMDialog* eepromDialog = nullptr;
     ParametersDialog *parametersDialog = nullptr;
+
+    void autoscaleYVisible(QLineSeries* series, QValueAxis* axisX, QValueAxis* axisY);
 };
 
 
